@@ -3,12 +3,12 @@ const _servicePg = new ServicePostgres();
 
 const getOfertas = async (request, response)=>{
     try {
-        const sql = "SELECT * FROM postgres.public.ofertas";
+        const sql = "SELECT * FROM agropagos.ofertas";
         let resDB = await _servicePg.execute(sql);
         let rowCount = resDB.rowCount;
         let rows = resDB.rows;
         let responseJSON = {};
-        responseJSON.message='Oferta ok';
+        responseJSON.message='Ofertas creadas';
         responseJSON.ok=true;
         responseJSON.info=rows;
         responseJSON.metainfo = {total : rowCount};
@@ -24,18 +24,19 @@ const getOfertas = async (request, response)=>{
 
 const savetOfertas = async (request, response)=>{
     try {
-        let sql = "INSERT INTO postgres.public.ofertas(id_oferta, producto, valor, metodo, valoroferta)";
+        
+        let sql = "INSERT INTO agropagos.ofertas(id_oferta, id_producto, metodos, ValorOferta, cliente)";
         sql+= "VALUES($1, $2, $3, $4, $5)";
         let body = request.body;
         let values = [
-            body.id_oferta, body.producto, body.valor, body.metodo, body.valoroferta
+            body.id_oferta, body.id_producto, body.metodos, body.ValorOferta, body.cliente
         ]
         let resDB = await _servicePg.execute(sql, values);
         let responseJSON = {};
         responseJSON.message='Oferta guardada';
         responseJSON.ok=true;
         responseJSON.info=body;
-        response.send(resDB);
+        response.send(responseJSON);
     } catch (error) {
         let responseJSON = {};
         responseJSON.ok=false;
@@ -48,12 +49,12 @@ const savetOfertas = async (request, response)=>{
 const updateOfertas = async (request, response)=>{
 
     try {
-
-        let sql = "UPDATE postgres.public.ofertas SET id_oferta=$1, producto=$2, valor=$3, metodo=$4, valoroferta=$5 WHERE id_oferta=$6";
+        
+        let sql = "UPDATE agropagos.ofertas SET id_oferta=$1, id_producto=$2, metodos=$3, ValorOferta=$4, cliente=$5 WHERE id_oferta=$6";
         let id = request.params.id;
         let body = request.body;
         let values = [
-            body.id_oferta, body.producto, body.valor, body.metodo, body.valoroferta, id
+            body.id_oferta, body.id_producto, body.metodos, body.ValorOferta, body.cliente, id
         ];
         await _servicePg.execute(sql, values);
         let responseJSON = {};
@@ -73,7 +74,7 @@ const updateOfertas = async (request, response)=>{
 
 const deleteOfertas = async (request, response)=>{
     try {
-        const sql = "DELETE FROM postgres.public.ofertas WHERE id_oferta=$1";
+        const sql = "DELETE FROM agropagos.ofertas WHERE id_oferta=$1";
 
         let id = request.params.id;
     

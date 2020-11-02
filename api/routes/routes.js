@@ -23,7 +23,15 @@ router
     .put("/api/v1/productos/:id", productosController.updateProductos)
     .delete("/api/v1/productos/:id", productosController.deleteProductos)
 
-    
+    .get("/api/v1/usuarios", usuariosController.getUsuarios)
+    .post("/api/v1/usuarios", usuariosController.saveUsuarios)
+    .put("/api/v1/usuarios/:id", usuariosController.updateUsuarios)
+    .delete("/api/v1/usuarios/:id", usuariosController.deleteUsuarios)
+
+    .get("/api/v1/videos", videosController.getVideos)
+    .post("/api/v1/videos", videosController.saveVideos)
+    .put("/api/v1/videos/:id", videosController.updateVideos)
+    .delete("/api/v1/videos/:id", videosController.deleteVideos);
 
 
 

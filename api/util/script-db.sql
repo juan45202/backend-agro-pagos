@@ -9,7 +9,7 @@ CREATE TABLE agropagos.usuario (
 
 CREATE TABLE agropagos.producto (
     id_producto SERIAL primary key,
-    id_usuario integer NOT NULL,
+    id_usuario integer NULL,
     nombre varchar(15) NULL,
     precio_base varchar(10) NULL,
     fecha DATE NULL,
@@ -27,16 +27,12 @@ CREATE TABLE agropagos.video (
 
 CREATE TABLE agropagos.ofertas (
     id_oferta varchar(20) PRIMARY key,
-    ValorOferta varchar(20) NULL,
     id_producto integer NULL,
+    metodos varchar(10) null,
+    ValorOferta varchar(20) NULL,
     cliente integer NULL
 );
 
-CREATE TABLE agropagos.usuarioProducto (
-    id SERIAL PRIMARY KEY,
-    id_usuario integer NOT null,
-    id_producto integer NOT NULL
-);
 
 CREATE TABLE agropagos.usuarioOferta (
 	id SERIAL PRIMARY key,
@@ -51,9 +47,6 @@ ALTER TABLE agropagos.video ADD CONSTRAINT id_producto FOREIGN KEY (id_producto)
 
 ALTER TABLE agropagos.usuarioOferta ADD CONSTRAINT id_usuario FOREIGN KEY (id_usuario) REFERENCES agropagos.usuario(id_usuario) ON UPDATE CASCADE;
 ALTER TABLE agropagos.usuarioOferta ADD CONSTRAINT id_oferta FOREIGN KEY (id_oferta) REFERENCES agropagos.ofertas(id_oferta) ON UPDATE CASCADE;
-
-ALTER TABLE agropagos.usuarioProducto ADD CONSTRAINT id_usuario FOREIGN KEY (id_usuario) REFERENCES agropagos.usuario(id_usuario) ON UPDATE CASCADE;
-ALTER TABLE agropagos.usuarioProducto ADD CONSTRAINT id_producto FOREIGN KEY (id_producto) REFERENCES agropagos.producto(id_producto) ON UPDATE CASCADE;
 
 ALTER TABLE agropagos.ofertas ADD CONSTRAINT id_cliente FOREIGN KEY (cliente) REFERENCES agropagos.usuario(id_usuario) ON UPDATE CASCADE;
 ALTER TABLE agropagos.ofertas ADD CONSTRAINT id_producto FOREIGN KEY (id_producto) REFERENCES agropagos.producto(id_producto) ON UPDATE CASCADE;

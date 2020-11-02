@@ -31,14 +31,15 @@ const saveProductos = async (request, response)=>{
         sql+= "VALUES($1, $2, $3, $4, $5, $6)";
         let body = request.body;
         let values = [
-            body.idProducto, body.idusuario, body.nombre, body.precioBase, body.fecha, body.descripcion 
+            body.idProducto, body.idusuario, body.nombre, body.precio_base, body.fecha, body.descripcion 
         ]
-        let resDB = await _servicePg.execute(sql, values);
+        
+        await _servicePg.execute(sql, values);
         let responseJSON = {};
         responseJSON.message='Producto agregado';
         responseJSON.ok=true;
         responseJSON.info=body;
-        response.send(resDB);
+        response.send(responseJSON);
     } catch (error) {
         let responseJSON = {};
         responseJSON.ok=false;
@@ -51,16 +52,15 @@ const saveProductos = async (request, response)=>{
 const updateProductos = async (request, response)=>{
 
     try {
-
-        let sql = "UPDATE postgres.public.ofertas SET id_oferta=$1, producto=$2, valor=$3, metodo=$4, valoroferta=$5 WHERE id_oferta=$6";
+        let sql = "UPDATE agropagos.producto SET  nombre=$1, precio_base=$2, fecha=$3, descripcion=$4 WHERE id_producto=$5";
         let id = request.params.id;
         let body = request.body;
         let values = [
-            body.id_oferta, body.producto, body.valor, body.metodo, body.valoroferta, id
+              body.nombre, body.precio_base, body.fecha, body.descripcion, id
         ];
         await _servicePg.execute(sql, values);
         let responseJSON = {};
-        responseJSON.message='Oferta Actualizada';
+        responseJSON.message='Producto Actualizado';
         responseJSON.ok=true;
         responseJSON.info=body;
         response.send(responseJSON);
@@ -76,14 +76,14 @@ const updateProductos = async (request, response)=>{
 
 const deleteProductos = async (request, response)=>{
     try {
-        const sql = "DELETE FROM postgres.public.ofertas WHERE id_oferta=$1";
+        const sql = "DELETE FROM agropagos.producto WHERE id_producto=$1";
 
         let id = request.params.id;
     
         let resDB = await _servicePg.execute(sql, [id]);
         let rowCount = resDB.rowCount;
         let responseJSON = {};
-        responseJSON.message='Oferta eliminada';
+        responseJSON.message='Producto eliminado';
         responseJSON.ok=true;
         responseJSON.info=[];
         responseJSON.metainfo = {total : rowCount};
