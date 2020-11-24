@@ -1,10 +1,42 @@
 const ServicePostgres = require('../services/postgres');
 const _servicePg = new ServicePostgres();
 
+const getOfertasAceptadas = async (request, response)=>{
+    try {
+        let sql = "select u.nombre usuario, p.nombre producto, p.precio_base precio, o.metodos, o.valoroferta, o.id_oferta, o.estado ";
+        sql+= "from agropagos.ofertas o inner join agropagos.producto p on o.id_producto = p.id_producto ";
+        sql+= "inner join agropagos.usuario u  on o.cliente = u.id_usuario where p.id_usuario=$1;";
+        
+        let body = request.body;
+        let values = [
+            body.id_usuario
+        ]
+        let resDB = await _servicePg.execute(sql, values);
+        let rowCount = resDB.rowCount;
+        let rows = resDB.rows;
+        let responseJSON = {};
+        responseJSON.message='Ofertas creadas';
+        responseJSON.ok=true;
+        responseJSON.info=rows;
+        responseJSON.metainfo = {total : rowCount};
+        response.send(responseJSON);
+    } catch (error) {
+        let responseJSON = {};
+        responseJSON.ok=false;
+        responseJSON.message=error.message;
+        response.status(400).send(responseJSON);
+    }
+    
+}
+
 const getOfertas = async (request, response)=>{
     try {
-        const sql = "SELECT * FROM agropagos.ofertas";
-        let resDB = await _servicePg.execute(sql);
+        let sql = "select u.nombre usuario, p.nombre producto, p.precio_base precio, o.metodos, o.valoroferta, o.id_oferta ";
+        sql+= "from agropagos.ofertas o inner join agropagos.producto p on o.id_producto = p.id_producto ";
+        sql+= "inner join agropagos.usuario u  on o.cliente = u.id_usuario where p.id_usuario=$1 AND o.estado != 'aceptado';";
+        
+        let id = request.params.id;
+        let resDB = await _servicePg.execute(sql, [id]);
         let rowCount = resDB.rowCount;
         let rows = resDB.rows;
         let responseJSON = {};
@@ -25,11 +57,11 @@ const getOfertas = async (request, response)=>{
 const savetOfertas = async (request, response)=>{
     try {
         
-        let sql = "INSERT INTO agropagos.ofertas(id_oferta, id_producto, metodos, ValorOferta, cliente)";
-        sql+= "VALUES($1, $2, $3, $4, $5)";
+        let sql = "INSERT INTO agropagos.ofertas(id_producto, metodos, ValorOferta, cliente)";
+        sql+= "VALUES($1, $2, $3, $4)";
         let body = request.body;
         let values = [
-            body.id_oferta, body.id_producto, body.metodos, body.ValorOferta, body.cliente
+            body.id_producto, body.metodos, body.ValorOferta, body.cliente
         ]
         let resDB = await _servicePg.execute(sql, values);
         let responseJSON = {};
@@ -50,11 +82,11 @@ const updateOfertas = async (request, response)=>{
 
     try {
         
-        let sql = "UPDATE agropagos.ofertas SET id_oferta=$1, id_producto=$2, metodos=$3, ValorOferta=$4, cliente=$5 WHERE id_oferta=$6";
+        let sql = "UPDATE agropagos.ofertas SET estado=$1 WHERE id_oferta=$2";
         let id = request.params.id;
         let body = request.body;
         let values = [
-            body.id_oferta, body.id_producto, body.metodos, body.ValorOferta, body.cliente, id
+            body.estado, body.id_oferta
         ];
         await _servicePg.execute(sql, values);
         let responseJSON = {};
@@ -96,4 +128,4 @@ const deleteOfertas = async (request, response)=>{
     
 }
 
-module.exports = {getOfertas, savetOfertas, updateOfertas, deleteOfertas};
+module.exports = {getOfertas, savetOfertas, updateOfertas, deleteOfertas, getOfertasAceptadas};
